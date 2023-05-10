@@ -1,8 +1,7 @@
-# Sample Hardhat Project
+# Proof Aggregator for Multiple ZK-rollups to Reduce Fee
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
+This repo demonstrates a basic proof aggregator use case. It comes with an aggregator contract and two rollup contracts. Some scripts and test code are provided.
 
-Try running some of the following tasks:
 
 ```shell
 npx hardhat help
