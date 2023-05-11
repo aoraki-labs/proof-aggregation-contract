@@ -4,28 +4,23 @@ pragma solidity ^0.8.9;
 // Uncomment this line to use console.log
 // import "hardhat/console.sol";
 
-contract Rollup1 {
+import "@openzeppelin/contracts/access/Ownable.sol";
+import {IMessageReceiver} from "./IMessageReceiver.sol";
 
-    // set aggregator address
-    // 1.set address
-
-    // callback endpoint
-    // 1.check if address is aggregator
-    // 2.emit event
-    // uint256 id
-    
-    event Verified();
+contract Rollup1 is IMessageReceiver, Ownable {
+    event Verified(string info);
 
     address aggregator;
 
-    function setAggregatorAddress() public {
+    function setAggregator(address _aggregator) public onlyOwner {
+        aggregator = _aggregator;
+    }
 
+    function getAggregator() public view returns (address) {
+        return aggregator;
     }
 
     function receiveMessage() public {
-        emit Verified();
+        emit Verified("Rollup1 Proof Verified");
     }
-
-
-
 }

@@ -5,7 +5,7 @@ async function main() {
 
     const aggregator = await utils.deployContract(hre, "Aggregator");
 
-    console.log("address:", aggregator.address) // 0xc5a2B2d4A3D44630c0917EE54724bb475c93EbD0
+    console.log("address:", aggregator.address) // 0x19679D02055A39afe6D72c4E9Cc9c9a5d44B012a
 }
 
 

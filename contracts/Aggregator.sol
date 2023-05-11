@@ -1,21 +1,14 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.9;
 
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import {IMessageReceiver} from "./IMessageReceiver.sol";
 
-
-contract Aggregator {
-
-    // data
-    // like NFT
-    // 1.circuit info: circuit id, circuit info, callback endpoint
-    // 2.proof info: proof id, proof data, status, circuit id
+contract Aggregator is Ownable {
 
     struct CircuitEndpoint {
         string desc;
         address contractAddress;
-        // bytes4 contractMethodToCall;
     }
 
     struct Proof {
@@ -32,65 +25,60 @@ contract Aggregator {
 
     address verifier;
 
-    // methods
-    // 1.register: 
-    // 2.submit proof
-    // 3.submit aggregated proof
-    // 4.help functions
-    //   - get pending proofs
-    //   - get status for a proof
-
-
-
     function register(
         string memory desc,
         address contractAddress
-        // bytes4 contractMethodCall
     ) public {
+        IMessageReceiver(contractAddress).setAggregator(address(this));
         circuitEndpoints[circuitEndpointNum] = CircuitEndpoint(
             desc,
             contractAddress
-            // contractMethodCall
         );
+        circuitEndpointNum += 1;
     }
 
-    function submit_proof() public {
-
+    function submit_proof(bytes calldata proof, uint circuitId) public {
+        proofs[proofNum] = Proof(
+            proof,
+            true,
+            circuitId
+        );
+        proofNum += 1;
     }
 
-    // proof
-    // ids
-
-    function set_verifier(address _verifier) public {
+    function set_verifier(address _verifier) public onlyOwner {
         verifier = _verifier;
     }
     
-    function submit_batch(bytes calldata proof) public returns (bool isCallSuccess, bytes memory response) {
-        // verify
-        // call back in turn
+    function submit_batch(
+        bytes calldata proof,
+        uint[] calldata ids
+    ) public returns (bool isCallSuccess, bytes memory response) {
+        // Skipped some necessary pre-check.
         (bool _isCallSuccess, bytes memory _response) = verifier.staticcall(proof);
+        require(_isCallSuccess, "verifier failed");
 
         isCallSuccess = _isCallSuccess;
         response = _response;
 
-        CircuitEndpoint storage endpoint = circuitEndpoints[0];
-
-        // Should use interface
-        (bool success, bytes memory _data) = address(endpoint.contractAddress).call(abi.encodeWithSignature("receiveMessage()"));
-        
+        uint lenIds = ids.length;
+        for (uint i = 0; i < lenIds; i ++) {
+            Proof storage subProof = proofs[ids[i]];
+            subProof.isPending = false;
+            IMessageReceiver messageReceiver = IMessageReceiver(
+                circuitEndpoints[subProof.circitId].contractAddress
+            );
+            require(
+                messageReceiver.getAggregator() == address(this),
+                "not authorized by receiver"
+            );
+            messageReceiver.receiveMessage();
+        }
     }
 
-
-
-    function get_pending() public pure {
-
+    function get_status(uint256 proofId) public view returns (bool status) {
+        require(proofId < proofNum, "proofId out of bound");
+        status = proofs[proofId].isPending;
     }
-
-    function get_status() public pure {
-
-    }
-
-
-
 
 }
