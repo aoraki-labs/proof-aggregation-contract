@@ -142,6 +142,26 @@ async function decode(hre: any, type: any, data: any) {
     return hre.ethers.utils.defaultAbiCoder.decode([type], data).toString();
 }
 
+function getContractAddress(name: string): string {
+    let contractsStr = fs.readFileSync('data/contracts.json', 'utf-8');
+    let contracts = JSON.parse(contractsStr);
+    return contracts[name];
+}
+
+function updateContractAddress(name: string, address: string) {
+    let contractsStr = fs.readFileSync('data/contracts.json', 'utf-8');
+    let contracts = JSON.parse(contractsStr);
+    contracts[name] = address;
+    let contractsStrNew = JSON.stringify(contracts);
+    fs.writeFileSync('data/contractInfo.json', contractsStrNew);
+}
+
+function readProofCallData(path: string): string {
+    let jsonStr = fs.readFileSync(path, 'utf-8');
+    let json = JSON.parse(jsonStr);
+    return json["call_data"];
+}
+
 export {
     deployContract,
     compileYulContract,
@@ -152,4 +172,7 @@ export {
     saveDeployments,
     getDeployments,
     decode,
+    getContractAddress,
+    updateContractAddress,
+    readProofCallData
 };

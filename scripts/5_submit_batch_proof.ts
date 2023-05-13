@@ -1,21 +1,23 @@
 import hre from "hardhat";
 import * as utils from "./utils";
 
+import * as fs from 'fs';
+
+
+
+
 async function main() {
 
     const Aggregator = await hre.ethers.getContractFactory("Aggregator");
     const aggregator = Aggregator.attach(
-        "0x19679D02055A39afe6D72c4E9Cc9c9a5d44B012a"
+        utils.getContractAddress("Aggregator")
     );
     
-    const tx = await aggregator.register(
-        "Rollup 1",
-        "0x31EdDa743F44c8dBa190D2A6F839Db14fe445dcf",
-    );
+    const proof = utils.readProofCallData("data/agg.json")
+    const ids = [0, 1];
+    const tx = await aggregator.submit_batch(proof, ids);
     const receipt = await tx.wait()
-    console.log(receipt);
-
-    
+    console.log(receipt.transactionHash);
 }
 
 
