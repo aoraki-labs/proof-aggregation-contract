@@ -29,7 +29,7 @@ contract Aggregator is Ownable {
         string memory desc,
         address contractAddress
     ) public {
-        IMessageReceiver(contractAddress).setAggregator(address(this));
+        // IMessageReceiver(contractAddress).setAggregator(address(this));
         circuitEndpoints[circuitEndpointNum] = CircuitEndpoint(
             desc,
             contractAddress

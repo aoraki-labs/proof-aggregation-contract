@@ -5,13 +5,21 @@ This repo demonstrates a basic proof aggregator use case. It comes with an aggre
 
 ### Preparation
 
-1. compile proof-aggregation rust code
+1. compile proof-aggregation repo
 
-2. compile contracts, set .env
+`cargo build --profile release --package proof-aggregation --bin proof-aggregation`
 
-3. get some test matic from mumbai faucet
+`cp ./target/release/proof-aggregation .`
 
-### How to Go Througn the Process
+2. compile proof-aggregation-contract repo
+
+`npm install`
+
+`npx hardhat compile`
+
+3. config `.env` and get some test matic from mumbai faucet
+
+### How to Go Through the Process
 
 1. deploy aggregator
 
@@ -23,7 +31,7 @@ This repo demonstrates a basic proof aggregator use case. It comes with an aggre
 
 3. export verifier
 
-`./proof-aggregation export-verifier AggregatedVerifier.yul`
+`./proof-aggregation export-verifier AggregationVerifier.yul`
 
 4. set verifier
 
@@ -37,7 +45,7 @@ This repo demonstrates a basic proof aggregator use case. It comes with an aggre
 
 6. submit proof1 proof2
 
-`npx hardhat run ./scripts/4_submit_proof.ts --network mumbai`
+`npx hardhat run ./scripts/4_submit_proofs.ts --network mumbai`
 
 7. gen aggregate
 

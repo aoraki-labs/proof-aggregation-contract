@@ -143,13 +143,13 @@ async function decode(hre: any, type: any, data: any) {
 }
 
 function getContractAddress(name: string): string {
-    let contractsStr = fs.readFileSync('data/contracts.json', 'utf-8');
+    let contractsStr = fs.readFileSync('data/contractInfo.json', 'utf-8');
     let contracts = JSON.parse(contractsStr);
     return contracts[name];
 }
 
 function updateContractAddress(name: string, address: string) {
-    let contractsStr = fs.readFileSync('data/contracts.json', 'utf-8');
+    let contractsStr = fs.readFileSync('data/contractInfo.json', 'utf-8');
     let contracts = JSON.parse(contractsStr);
     contracts[name] = address;
     let contractsStrNew = JSON.stringify(contracts);
